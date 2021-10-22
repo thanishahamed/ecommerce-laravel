@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentDetail extends Model
 {
     use HasFactory;
+
+    public function order()
+    {
+        return $this->hasOne(OrderDetail::class);
+    }
 }
