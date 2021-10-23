@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Http\Livewire\AboutUsComponent;
 use App\Http\Livewire\AdminDashboard;
 use App\Http\Livewire\HomeController;
@@ -47,3 +48,4 @@ Route::get('/contact-us', ContactUsComponent::class)->name('contact-us');
 Route::get('/checkout', CheckoutComponent::class)->name('checkout');
 Route::get('/search/{searchString}', SearchDisplay::class)->name('search');
 Route::get('/admin', AdminDashboard::class)->name('admin');
+Route::get('/datatable', [UserController::class, 'index'])->name('users.index');

@@ -2,11 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\ProductCategory;
 use Livewire\Component;
 
 class AdminDashboard extends Component
 {
-    public $tab = "product";
+    public $tab = "category";
 
     public function render()
     {
