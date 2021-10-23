@@ -1,5 +1,14 @@
 <?php
 
+use App\Http\Livewire\AboutUsComponent;
+use App\Http\Livewire\AdminDashboard;
+use App\Http\Livewire\HomeController;
+use App\Http\Livewire\ShopComponent;
+use App\Http\Livewire\CartComponent;
+use App\Http\Livewire\HomeComponent;
+use App\Http\Livewire\CheckoutComponent;
+use App\Http\Livewire\ContactUsComponent;
+use App\Http\Livewire\SearchDisplay;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +29,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', HomeComponent::class)->name('home');
 
 
 Route::get('/test', function () {
@@ -29,3 +38,12 @@ Route::get('/test', function () {
     $user->paymentMethods;
     return ($user);
 });
+
+// Route::get('/', HomeComponent::class)->name('home');
+Route::get('/shop', ShopComponent::class)->name('shop');
+Route::get('/cart', CartComponent::class)->name('cart');
+Route::get('/about-us', AboutUsComponent::class)->name('about-us');
+Route::get('/contact-us', ContactUsComponent::class)->name('contact-us');
+Route::get('/checkout', CheckoutComponent::class)->name('checkout');
+Route::get('/search/{searchString}', SearchDisplay::class)->name('search');
+Route::get('/admin', AdminDashboard::class)->name('admin');
