@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('discount_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('status');
             $table->string('name');
+            $table->string('short_description')->nullable();
             $table->text('description');
             $table->bigInteger('price');
             $table->timestamps();
