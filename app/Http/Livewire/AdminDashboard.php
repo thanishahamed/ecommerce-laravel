@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class AdminDashboard extends Component
 {
-    public $tab = "category";
+    public $tab = "product";
 
     public function render()
     {

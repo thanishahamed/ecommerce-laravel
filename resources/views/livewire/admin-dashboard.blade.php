@@ -138,7 +138,7 @@
                     <a wire:click="switch_tab('category')" class="list-group-item list-group-item-action">Categories</a>
                     <a wire:click="switch_tab('user')" class="list-group-item list-group-item-action">Users</a>
                     <a wire:click="switch_tab('purchase')" class="list-group-item list-group-item-action">Purchases</a>
-                    <a wire:click="switch_tab('landing')" class="list-group-item list-group-item-action">Manage Landing Page</a>
+                    <a wire:click="switch_tab('settings')" class="list-group-item list-group-item-action">Settings</a>
                 </div>
             </div>
             <div wire:loading.delay wire:target="switch_tab" class="loading">Loading&#8230;</div>
