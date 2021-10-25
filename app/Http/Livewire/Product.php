@@ -5,10 +5,13 @@ namespace App\Http\Livewire;
 use App\Models\Discount;
 use App\Models\Product as ModelsProduct;
 use App\Models\ProductCategory;
+use App\Models\ProductInventory;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Product extends Component
 {
+    use WithFileUploads;
     public $searchString = "";
     public $items = array();
     public $dataFrom = 0;
@@ -19,11 +22,17 @@ class Product extends Component
     public $categories = array();
     public $productInventoryId = "";
     public $discountId = "";
+    public $stockStatus = "";
     public $discounts = array();
     public $status = "";
     public $name = "";
     public $description = "";
     public $price = "";
+    public $singleItem = "";
+    public $quantity = "";
+    public $images = array();
+    public $image;
+    public $tempData;
 
     public function render()
     {
@@ -35,14 +44,24 @@ class Product extends Component
 
     public function clearTextFields()
     {
-        $this->categoryName = "";
-        $this->categoryDescription = "";
+        $this->productId = 0;
+        $this->productCategoryId = "";
+        $this->productInventoryId = "";
+        $this->discountId = "";
+        $this->status = "";
+        $this->name = "";
+        $this->description = "";
+        $this->price = "";
+        $this->singleProduct = "";
     }
+
     public function loadData()
     {
-        $this->items = ModelsProduct::latest('id')
+        $data = ModelsProduct::latest('id')
             ->where('name', 'LIKE', '%' . $this->searchString . '%')
             ->skip($this->dataFrom)->take($this->dataTo)->get();
+
+        $this->items = $data;
     }
 
     public function loadCategories()
@@ -97,7 +116,25 @@ class Product extends Component
     public function save()
     {
         $this->validate([
-            'productCategoryId' => 'required|integer'
+            'productCategoryId' => 'required|integer',
+            'price' => 'required|numeric',
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        $inventory = ProductInventory::create([
+            'quantity' => 0,
+            'status' => 'Out of stock'
+        ]);
+
+        $product = ModelsProduct::create([
+            'product_category_id' => $this->productCategoryId,
+            'product_inventory_id' => $inventory->id,
+            'discount_id' => $this->discountId,
+            'status' => 'active',
+            'name' => $this->name,
+            'description' => $this->description,
+            'price' => $this->price,
         ]);
 
         $this->dispatchBrowserEvent('swal:success', [
@@ -109,18 +146,35 @@ class Product extends Component
         $this->clearTextFields();
     }
 
-    public function prepareEdit($id)
+    public function loadOneItem($id)
     {
         $data = ModelsProduct::findOrFail($id);
+        $data->orders;
+        $data->category;
+        $data->inventory;
+        $data->images;
+        $data->onCart;
+        $data->discount;
 
-        $this->productId = $data->id;
-        $this->productCategoryId = $data->product_category_id;
-        $this->productInventoryId = $data->product_inventory_id;
-        $this->discountId = $data->discount_id;
-        $this->status = $data->status;
-        $this->name = $data->name;
-        $this->description = $data->description;
-        $this->price = $data->price;
+        $this->singleItem = $data;
+    }
+
+    public function prepareEdit($id)
+    {
+        $this->loadOneItem($id);
+
+        $this->productId = $this->singleItem['id'];
+        $this->productCategoryId = $this->singleItem['product_category_id'];
+        $this->productInventoryId = $this->singleItem['product_inventory_id'];
+        $this->discountId = $this->singleItem['dicount_id'];
+        $this->status = $this->singleItem['status'];
+        $this->name = $this->singleItem['name'];
+        $this->description = $this->singleItem['description'];
+        $this->price = $this->singleItem['price'];
+        $this->images = $this->singleItem['images'];
+
+        $this->quantity = $this->singleItem['inventory']['quantity'];
+        $this->stockStatus = $this->singleItem['inventory']['status'];
     }
 
     public function update()
@@ -147,7 +201,10 @@ class Product extends Component
 
     public function delete($id)
     {
-        ModelsProduct::findOrFail($id)->delete();
+        $data = ModelsProduct::findOrFail($id);
+
+        ProductInventory::findOrFail($data->product_inventory_id)->delete();
+        $data->delete();
     }
 
     public function deepSearch()
@@ -157,5 +214,16 @@ class Product extends Component
         $this->dataTo = 7;
 
         $this->loadData();
+    }
+
+    public function uploadImage()
+    {
+        $this->validate([
+            'image' => 'image|max:1024', // 1MB Max
+        ]);
+
+        $uploadedData = $this->image->storePublicly('images', 'public');
+        $imageUrl = "/storage" . "/" . $uploadedData;
+        $this->tempData = $imageUrl;
     }
 }

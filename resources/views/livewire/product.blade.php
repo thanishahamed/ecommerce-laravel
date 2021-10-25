@@ -47,10 +47,19 @@
                                     <div class="form-group">
                                         <label for="name"> Product Name: </label>
                                         <input class="form-control" id="name" type="text" wire:model="name" placeholder="Enter product name">
-                                        @if($errors->has('description'))
-                                        <div class="text-danger text-strong"> {{$errors->first('description')}} </div>
+                                        @if($errors->has('name'))
+                                        <div class="text-danger text-strong"> {{$errors->first('name')}} </div>
                                         @endif
                                     </div>
+
+                                    <div class="form-group">
+                                        <label for="name"> Product Unit Price (LKR): </label>
+                                        <input class="form-control" id="name" type="number" wire:model="price" placeholder="Enter product name">
+                                        @if($errors->has('price'))
+                                        <div class="text-danger text-strong"> {{$errors->first('price')}} </div>
+                                        @endif
+                                    </div>
+
                                     <div class="form-group">
                                         <label for="name"> Product Category: @if($productCategoryId>0) <span class="text-success"> Selected </span> @endif</label>
                                         <select class="form-control form-control-sm" wire:model="productCategoryId">
@@ -72,16 +81,12 @@
                                             <option value="{{$discount->id}}">{{$discount->name}}</option>
                                             @endforeach
                                         </select>
-
-                                        @if($errors->has('productCategoryId'))
-                                        <div class="text-danger text-strong"> {{$errors->first('productCategoryId')}} </div>
-                                        @endif
                                     </div>
                                     <div class="form-group">
                                         <label for="desc"> Description: </label>
                                         <textarea class="form-control" id="desc" wire:model="description" placeholder="Brief description about the product"></textarea>
-                                        @if($errors->has('categoryDescription'))
-                                        <div class="text-danger"> {{$errors->first('categoryDescription')}} </div>
+                                        @if($errors->has('description'))
+                                        <div class="text-danger"> {{$errors->first('description')}} </div>
                                         @endif
                                     </div>
                                     <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="save">SAVE</button>
@@ -95,35 +100,122 @@
                 </div>
             </div>
 
-            <!-- Edit Modal
-            <div wire:ignore.self class="modal" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md">
+            <!-- Modal Edit Product-->
+            <div wire:ignore.self class="modal" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" align="center" id="exampleModalLabel">Edit category!</h5>
+                            <h5 class="modal-title" align="center" id="exampleModalLabel">Edit a product!</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <h3> Edit Category with id {{$productId}}</h3>
+                            <h1> Edit Product </h1>
+                            <!-- Basic Info -->
+                            <div class="alert alert-secondary text-large">
+                                Basic Information
+                            </div>
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="name"> Category Name: </label>
-                                        <input class="form-control" id="name" type="text" wire:model="categoryName" placeholder="Enter category name">
-                                        @if($errors->has('categoryName'))
-                                        <div class="text-danger text-strong"> {{$errors->first('categoryName')}} </div>
+                                        <label for="name"> Product Name: </label>
+                                        <input class="form-control" id="name" type="text" wire:model="name" placeholder="Enter product name">
+                                        @if($errors->has('name'))
+                                        <div class="text-danger text-strong"> {{$errors->first('name')}} </div>
                                         @endif
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="name"> Product Unit Price (LKR): </label>
+                                        <input class="form-control" id="name" type="number" wire:model="price" placeholder="Enter product name">
+                                        @if($errors->has('price'))
+                                        <div class="text-danger text-strong"> {{$errors->first('price')}} </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="name"> Product Category: @if($productCategoryId>0) <span class="text-success"> Selected </span> @endif</label>
+                                        <select class="form-control form-control-sm" wire:model="productCategoryId">
+                                            <option value="">Select</option>
+                                            @foreach($categories as $category)
+                                            <option value="{{$category->id}}">{{$category->name}}</option>
+                                            @endforeach
+                                        </select>
+                                        @if($errors->has('productCategoryId'))
+                                        <div class="text-danger text-strong"> {{$errors->first('productCategoryId')}} </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="name"> Discount: (optional) @if($discountId>0) <span class="text-success"> Selected </span> @endif</label>
+                                        <select class="form-control form-control-sm" wire:model="discountId">
+                                            <option value="">Select</option>
+                                            @foreach($discounts as $discount)
+                                            <option value="{{$discount->id}}">{{$discount->name}}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="desc"> Description: </label>
-                                        <textarea class="form-control" id="desc" wire:model="categoryDescription" placeholder="Brief description about the category"></textarea>
-                                        @if($errors->has('categoryDescription'))
-                                        <div class="text-danger"> {{$errors->first('categoryDescription')}} </div>
+                                        <textarea class="form-control" id="desc" wire:model="description" placeholder="Brief description about the product"></textarea>
+                                        @if($errors->has('description'))
+                                        <div class="text-danger"> {{$errors->first('description')}} </div>
                                         @endif
                                     </div>
-                                    <button type="button" class="btn btn-primary pull-right" wire:click="update">UPDATE</button>
+                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="save">SAVE</button>
+                                </div>
+                            </div>
+                            <!-- Ending Basic Info -->
+                            <hr>
+                            <div class="alert alert-secondary text-large">
+                                Inventory Information
+                            </div>
+                            <!-- Inventory -->
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="name"> Quantity: </label>
+                                        <input class="form-control" id="name" type="number" wire:model="quantity" placeholder="Enter product name">
+                                        @if($errors->has('quantity'))
+                                        <div class="text-danger text-strong"> {{$errors->first('quantity')}} </div>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name"> Stock Status: @if($stockStatus !== "") <span class="text-success"> Selected </span> @endif</label>
+                                        <select class="form-control form-control-sm" wire:model="stockStatus">
+                                            <option value="">Select</option>
+                                            <option value="Out of stock">Out of stock</option>
+                                            <option value="In stock">In stock</option>
+                                        </select>
+                                        @if($errors->has('productCategoryId'))
+                                        <div class="text-danger text-strong"> {{$errors->first('productCategoryId')}} </div>
+                                        @endif
+                                    </div>
+
+                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="save">UPDATE INVENTORY</button>
+                                </div>
+                            </div>
+
+                            <!-- Product Images -->
+                            <div class="row">
+                                <div class="col">
+                                    <div class="py-3">Click on an image to delete</div>
+                                    <div class="form-group">
+                                        <div style="display: flex; flex-wrap:wrap">
+                                            @foreach($images as $image)
+                                            <img src="{{$image->slug}}" alt="product" width="200" class="img-thumbnail">
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{$image}}
+                                        <input type="file" name="" id="" wire:model="image">
+                                        <!-- <img src="{{storage_path('app/images/O7Wce7wGH2lChRlp1Uw3VBTJ7ZjRX3i2r5fVaEP4.jpg')}}" alt=""> -->
+                                        <img src="{{asset('/storage/images/CK8BEt3vJlgATTwQeu1wS8b2jVpEIGAEKIMGqnWb.svg')}}" alt="">
+                                        {{$tempData}}
+                                    </div>
+                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="uploadImage">Upload Image</button>
                                 </div>
                             </div>
                         </div>
@@ -132,7 +224,7 @@
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
 
 
             <div class="overflow-auto" style="min-height: 450px; max-height: 450px; max-width: '100%';">
@@ -142,7 +234,7 @@
                             <th>Id</th>
                             <th>Name</th>
                             <th>Description</th>
-                            <th>Status</th>
+                            <th>Price (LKR)</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -152,7 +244,7 @@
                             <th>Id</th>
                             <th>Name</th>
                             <th>Description</th>
-                            <th>Status</th>
+                            <th>Price (LKR)</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -163,11 +255,11 @@
                             <td>{{$item->id}}</td>
                             <td>{{$item->name}}</td>
                             <td>{{$item->description}}</td>
-                            <td>{{$item->status}}</td>
+                            <td>Rs. {{$item->price}}</td>
                             <td>{{$item->created_at}}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#editModal" wire:click="prepareEdit({{$item->id}})">Edit</button>
+                                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#editModal" wire:click="prepareEdit({{$item->id}})">More</button>
                                     <button type="button" class="btn btn-outline-danger" wire:click="confirmDelete({{$item->id}})">Delete</button>
                                 </div>
                             </td>
@@ -195,7 +287,7 @@
                 showCancelButton: true,
             }).then(res => {
                 if (res.isConfirmed) {
-                    window.livewire.emit('deleteCategory', event.detail.id)
+                    window.livewire.emit('delete', event.detail.id)
                     swal.fire({
                         title: "Deleted",
                         text: 'Category Deleted Successfully!',
