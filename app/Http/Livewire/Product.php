@@ -5,9 +5,13 @@ namespace App\Http\Livewire;
 use App\Models\Discount;
 use App\Models\Product as ModelsProduct;
 use App\Models\ProductCategory;
+use App\Models\ProductImage;
 use App\Models\ProductInventory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+// use File;
 
 class Product extends Component
 {
@@ -16,7 +20,7 @@ class Product extends Component
     public $items = array();
     public $dataFrom = 0;
     public $dataTo = 7;
-    public $listeners = ['delete'];
+    public $listeners = ['delete', 'deleteImage'];
     public $productId = 0;
     public $productCategoryId = "";
     public $categories = array();
@@ -31,8 +35,9 @@ class Product extends Component
     public $singleItem = "";
     public $quantity = "";
     public $images = array();
-    public $image;
+    public $image = null;
     public $tempData;
+    public $inventoryId;
 
     public function render()
     {
@@ -103,16 +108,6 @@ class Product extends Component
         $this->productCategoryId = $data;
     }
 
-    public function confirmDelete($id)
-    {
-        $this->dispatchBrowserEvent('swal:confirm', [
-            'type' => 'warning',
-            'title' => 'Are you sure?',
-            'text' => '',
-            'id' => $id
-        ]);
-    }
-
     public function save()
     {
         $this->validate([
@@ -127,10 +122,11 @@ class Product extends Component
             'status' => 'Out of stock'
         ]);
 
+        // dd($this->discountId);
         $product = ModelsProduct::create([
             'product_category_id' => $this->productCategoryId,
             'product_inventory_id' => $inventory->id,
-            'discount_id' => $this->discountId,
+            'discount_id' => $this->discountId === "" ? null : $this->discountId,
             'status' => 'active',
             'name' => $this->name,
             'description' => $this->description,
@@ -173,12 +169,21 @@ class Product extends Component
         $this->price = $this->singleItem['price'];
         $this->images = $this->singleItem['images'];
 
+        // dump($this->singleItem)
+        $this->inventoryId = $this->singleItem['inventory']['id'];
         $this->quantity = $this->singleItem['inventory']['quantity'];
         $this->stockStatus = $this->singleItem['inventory']['status'];
     }
 
     public function update()
     {
+
+        $this->validate([
+            'productCategoryId' => 'required|integer',
+            'price' => 'required|numeric',
+            'name' => 'required|string',
+            'description' => 'required|string',
+        ]);
 
         $data = ModelsProduct::findOrFail($this->productId);
 
@@ -199,6 +204,35 @@ class Product extends Component
         ]);
     }
 
+    public function confirmDelete($id)
+    {
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'type' => 'warning',
+            'title' => 'Are you sure?',
+            'text' => '',
+            'id' => $id
+        ]);
+    }
+
+    public function confirmDeleteImage($id)
+    {
+
+        $this->dispatchBrowserEvent('swal:confirmDeleteImage', [
+            'type' => 'warning',
+            'title' => 'Are you sure?',
+            'text' => '',
+            'id' => $id
+        ]);
+    }
+
+    public function deleteImage($id)
+    {
+        $img = ProductImage::findOrFail($id);
+        unlink(public_path($img->slug));
+        $img->delete();
+        $this->prepareEdit($this->productId);
+    }
+
     public function delete($id)
     {
         $data = ModelsProduct::findOrFail($id);
@@ -216,6 +250,13 @@ class Product extends Component
         $this->loadData();
     }
 
+    public function updatedImage()
+    {
+        $this->validate([
+            'image' => 'image|max:1024',
+        ]);
+    }
+
     public function uploadImage()
     {
         $this->validate([
@@ -224,6 +265,35 @@ class Product extends Component
 
         $uploadedData = $this->image->storePublicly('images', 'public');
         $imageUrl = "/storage" . "/" . $uploadedData;
-        $this->tempData = $imageUrl;
+
+        ProductImage::create([
+            'product_id' => $this->productId,
+            'slug' => $imageUrl,
+        ]);
+
+        $this->dispatchBrowserEvent('swal:success', [
+            'type' => 'success',
+            'title' => 'Image updated for the product ' . $this->singleItem['name'] . '!',
+            'text' => '',
+        ]);
+
+        $this->prepareEdit($this->productId);
+    }
+
+    public function updateProductInventory($id)
+    {
+        $inv = ProductInventory::findOrFail($id);
+
+        $inv->status = $this->stockStatus;
+        $inv->quantity = $this->quantity;
+        $inv->save();
+
+        $this->prepareEdit($this->productId);
+
+        $this->dispatchBrowserEvent('swal:success', [
+            'type' => 'success',
+            'title' => 'Inventory Updated Successfully!',
+            'text' => '',
+        ]);
     }
 }

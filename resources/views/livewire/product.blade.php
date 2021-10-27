@@ -163,7 +163,7 @@
                                         <div class="text-danger"> {{$errors->first('description')}} </div>
                                         @endif
                                     </div>
-                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="save">SAVE</button>
+                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="update">UPDATE</button>
                                 </div>
                             </div>
                             <!-- Ending Basic Info -->
@@ -193,7 +193,7 @@
                                         @endif
                                     </div>
 
-                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="save">UPDATE INVENTORY</button>
+                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="updateProductInventory({{$inventoryId}})">UPDATE INVENTORY</button>
                                 </div>
                             </div>
 
@@ -202,20 +202,31 @@
                                 <div class="col">
                                     <div class="py-3">Click on an image to delete</div>
                                     <div class="form-group">
+                                        @if($errors->has('image'))
+                                        <div class="text-danger text-strong alert alert-warning"> @if($errors->first('image') === 'The image must be an image.') Please choose an image first @else {{$errors->first('image')}} @endif </div>
+                                        @endif
                                         <div style="display: flex; flex-wrap:wrap">
                                             @foreach($images as $image)
-                                            <img src="{{$image->slug}}" alt="product" width="200" class="img-thumbnail">
+                                            <img src="{{$image->slug}}" alt="product" width="200" class="img-thumbnail" wire:click="confirmDeleteImage({{$image->id}});">
                                             @endforeach
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
                                     <div class="form-group">
-                                        {{$image}}
-                                        <input type="file" name="" id="" wire:model="image">
-                                        <!-- <img src="{{storage_path('app/images/O7Wce7wGH2lChRlp1Uw3VBTJ7ZjRX3i2r5fVaEP4.jpg')}}" alt=""> -->
-                                        <img src="{{asset('/storage/images/CK8BEt3vJlgATTwQeu1wS8b2jVpEIGAEKIMGqnWb.svg')}}" alt="">
-                                        {{$tempData}}
+
+                                        <div style="display: flex;">
+                                            <div class="input-group">
+                                                <input type="file" wire:model="image" class="file-input" id="inputGroupFile">
+                                                <button type="button" class="btn btn-primary my-3" id="addButton" wire:click="uploadImage">Upload Image</button>
+                                            </div>
+
+
+                                        </div>
+
                                     </div>
-                                    <button type="button" class="btn btn-primary pull-right" id="addButton" wire:click="uploadImage">Upload Image</button>
                                 </div>
                             </div>
                         </div>
@@ -291,6 +302,24 @@
                     swal.fire({
                         title: "Deleted",
                         text: 'Category Deleted Successfully!',
+                        icon: 'success',
+                    })
+                }
+            })
+        });
+
+        window.addEventListener('swal:confirmDeleteImage', event => {
+            swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.type,
+                showCancelButton: true,
+            }).then(res => {
+                if (res.isConfirmed) {
+                    window.livewire.emit('deleteImage', event.detail.id)
+                    swal.fire({
+                        title: "Deleted",
+                        text: 'Image Deleted Successfully!',
                         icon: 'success',
                     })
                 }
