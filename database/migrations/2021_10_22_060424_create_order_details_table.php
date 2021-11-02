@@ -17,7 +17,7 @@ class CreateOrderDetailsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('payment_detail_id')->constrained()->onDelete('cascade');
-            $table->bigInteger('total');
+            $table->double('total');
             $table->timestamps();
         });
     }

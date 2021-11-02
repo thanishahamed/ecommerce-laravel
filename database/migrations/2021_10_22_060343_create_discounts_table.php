@@ -17,7 +17,7 @@ class CreateDiscountsTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->bigInteger('discount_percent');
+            $table->double('discount_percent');
             $table->boolean('active');
             $table->string('status');
             $table->timestamps();

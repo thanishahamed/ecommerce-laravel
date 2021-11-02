@@ -136,6 +136,7 @@
                         Products
                     </a>
                     <a wire:click="switch_tab('category')" class="list-group-item list-group-item-action">Categories</a>
+                    <a wire:click="switch_tab('discount')" class="list-group-item list-group-item-action">Discount</a>
                     <a wire:click="switch_tab('user')" class="list-group-item list-group-item-action">Users</a>
                     <a wire:click="switch_tab('purchase')" class="list-group-item list-group-item-action">Purchases</a>
                     <a wire:click="switch_tab('settings')" class="list-group-item list-group-item-action">Settings</a>
@@ -147,6 +148,10 @@
                 @switch($tab)
                 @case('product')
                 <livewire:product />
+                @break
+
+                @case('discount')
+                <livewire:discount-component />
                 @break
 
                 @case('category')
