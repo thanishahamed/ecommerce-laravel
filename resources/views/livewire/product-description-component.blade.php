@@ -50,7 +50,7 @@
                         <div class="stock-info in-stock">
                             <p class="availability">Availability: <b>In Stock</b></p>
                         </div>
-                        <div class="quantity">
+                        <!-- <div class="quantity">
                             <span>Quantity:</span>
                             <div class="quantity-input">
                                 <input type="text" name="product-quatity" value="1" data-max="120" pattern="[0-9]*">
@@ -58,11 +58,11 @@
                                 <a class="btn btn-reduce" href="#"></a>
                                 <a class="btn btn-increase" href="#"></a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="wrap-butons">
                             @if(count($product->cart) > 0 && auth()->user()->id === $product->cart[0]->user_id)
-                            <a class="btn add-to-cart disabled">
-                                ON CART
+                            <a class="btn add-to-cart" href="{{route('cart')}}">
+                                GO TO CART
                             </a>
                             @else
                             <a class="btn add-to-cart " wire:click="addtocart({{$product->id}})">

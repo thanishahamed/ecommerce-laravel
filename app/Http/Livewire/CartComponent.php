@@ -29,6 +29,7 @@ class CartComponent extends Component
             $product->total = ($product->price * $item->quantity);
             $product->quantity = $item->quantity;
             $product->inventory;
+            $product->cart_item_id = $item->id;
             array_push($result, $product);
         }
 
@@ -38,5 +39,33 @@ class CartComponent extends Component
         }
 
         $this->cart_items = $result;
+    }
+
+    public function deleteCartItem($id)
+    {
+        $item = Cart::findOrFail($id);
+
+        $item->delete();
+        return redirect(request()->header('Referer'));
+    }
+
+    public function updateQuantity($num, $cartItemId)
+    {
+        // dump($num);
+        $item = Cart::findOrFail($cartItemId);
+        $product = Product::findOrFail($item->product_id);
+
+        $count = $product->inventory->quantity;
+        if ($num === 0) {
+            session()->flash('message', 'Alert: You must select at least one item!');
+            return redirect(request()->header('Referer'));
+        }
+        if ($num > $count) {
+            session()->flash('message', 'Warning: Only ' . $count . ' items found for ' . $product->name . "!");
+        } else {
+            $item->quantity = $num;
+            $item->update();
+        }
+        return redirect(request()->header('Referer'));
     }
 }
