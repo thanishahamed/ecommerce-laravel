@@ -11,6 +11,12 @@
         <div class=" main-content-area">
 
             <div class="wrap-iten-in-cart">
+                @if($errors->has('stock-message'))
+                <div class="text-danger text-strong">
+                    <h1>{{$errors->first('stock-message')}}</h1>
+                </div>
+                @endif
+
                 <h3 class="box-title">Products Name</h3>
                 <ul class="products-cart">
                     @if (session()->has('message'))

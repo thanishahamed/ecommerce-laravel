@@ -110,12 +110,12 @@
                                     </a>
                                 </div>
                                 <div class="wrap-icon-section minicart">
-                                    <a href="#" class="link-direction">
+                                    <a href="{{route('cart')}}" class="link-direction">
                                         <i class="fa fa-shopping-basket" aria-hidden="true"></i>
                                         <div class="left-info">
 
                                             @if($cartCount > 0)
-                                            <span class="index"> {{$cartCount}} items</span>
+                                            <span class="index"> {{$cartCount}} item(s)</span>
                                             @endif
                                             <span class="title">CART</span>
                                             <div wire:loading.delay wire:target="search" class="loading">Loading&#8230;</div>
@@ -141,20 +141,21 @@
                                     <li class="menu-item home-icon">
                                         <a href="{{route('home')}}" class="link-term mercado-item-title"><i class="fa fa-home" aria-hidden="true"></i></a>
                                     </li>
-                                    <li class="menu-item">
-                                        <a href="{{route('about-us')}}" class="link-term mercado-item-title">About Us</a>
-                                    </li>
+
                                     <li class="menu-item">
                                         <a href="{{route('shop')}}" class="link-term mercado-item-title">Shop</a>
                                     </li>
                                     <li class="menu-item">
                                         <a href="{{route('cart')}}" class="link-term mercado-item-title">Cart</a>
                                     </li>
-                                    <li class="menu-item">
+                                    <!-- <li class="menu-item">
                                         <a href="{{route('checkout')}}" class="link-term mercado-item-title">Checkout</a>
-                                    </li>
+                                    </li> -->
                                     <li class="menu-item">
                                         <a href="{{route('contact-us')}}" class="link-term mercado-item-title">Contact Us</a>
+                                    </li>
+                                    <li class="menu-item">
+                                        <a href="{{route('about-us')}}" class="link-term mercado-item-title">About Us</a>
                                     </li>
                                 </ul>
                             </div>

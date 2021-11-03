@@ -16,14 +16,11 @@ class ProductDescriptionComponent extends Component
     public function mount($id)
     {
         $this->productId = $id;
-        $item = Product::findOrFail($id);
-        $item->images;
-        $item->cart;
-        $this->product = $item;
     }
 
     public function render()
     {
+        $this->loadProduct();
         return view('livewire.product-description-component')->extends('layouts.app')->section('content');
     }
 
@@ -35,5 +32,14 @@ class ProductDescriptionComponent extends Component
             'quantity' => 1,
         ]);
         return redirect(request()->header('Referer'));
+    }
+
+    public function loadProduct()
+    {
+        $item = Product::findOrFail($this->productId);
+        $item->images;
+        $carts = Cart::select('*')->where('user_id', auth()->user()->id)->get();
+        $item->cart = $carts;
+        $this->product = $item;
     }
 }

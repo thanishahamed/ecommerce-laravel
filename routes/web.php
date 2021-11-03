@@ -11,6 +11,7 @@ use App\Http\Livewire\CheckoutComponent;
 use App\Http\Livewire\ContactUsComponent;
 use App\Http\Livewire\ProductDescriptionComponent;
 use App\Http\Livewire\SearchDisplay;
+use App\Http\Livewire\ThankYouComponent;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,7 @@ Route::get('/test', function () {
 });
 
 // Route::get('/', HomeComponent::class)->name('home');
+Route::get('/order-placed', ThankYouComponent::class)->name('thank-you');
 Route::get('/shop', ShopComponent::class)->name('shop');
 Route::get('/product/{id}', ProductDescriptionComponent::class)->name('description');
 Route::get('/cart', CartComponent::class)->name('cart');
