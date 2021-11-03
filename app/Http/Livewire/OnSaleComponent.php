@@ -3,19 +3,15 @@
 namespace App\Http\Livewire;
 
 use App\Models\Product;
-use App\Models\ProductCategory;
 use Livewire\Component;
 
-class HomeComponent extends Component
+class OnSaleComponent extends Component
 {
-
     public $products = array();
-
-
     public function render()
     {
         $this->loadProducts();
-        return view('livewire.home-component')->extends('layouts.app')->section('content');;
+        return view('livewire.on-sale-component');
     }
 
     public function loadProducts()

@@ -1,5 +1,3 @@
-@extends('livewire.main-layout')
-@section('content')
 <!--main area-->
 <main id="main" class="main-site">
 
@@ -62,7 +60,15 @@
                             </div>
                         </div>
                         <div class="wrap-butons">
-                            <a href="#" class="btn add-to-cart">Add to Cart</a>
+                            @if(count($product->cart) > 0 && auth()->user()->id === $product->cart[0]->user_id)
+                            <a class="btn add-to-cart disabled">
+                                ON CART
+                            </a>
+                            @else
+                            <a class="btn add-to-cart " wire:click="addtocart({{$product->id}})">
+                                ADD TO CART
+                            </a>
+                            @endif
                             <div class="wrap-btn">
                                 <a href="#" class="btn btn-compare">Add Compare</a>
                                 <a href="#" class="btn btn-wishlist">Add Wishlist</a>
@@ -465,4 +471,3 @@
 
 </main>
 <!--main area-->
-@endsection
